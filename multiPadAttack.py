@@ -1,19 +1,11 @@
-def xor_bytes(b1, b2):
-    # Determine the length of the shorter byte array
-    min_length = min(len(b1), len(b2))
-    # XOR the bytes of the two arrays up to the minimum length
-    return bytes([x ^ y for x, y in zip(b1[:min_length], b2[:min_length])])
-
-def hex_to_bytes(hex_string):
-    # Convert a hexadecimal string to bytes
-    return bytes.fromhex(hex_string)
+import helperFunctions as hf
 
 def test_word_at_start(xor_result_bytes, word):
     word_bytes = word.encode('utf-8')  # Convert word to bytes
     # Test only starting at the beginning
     if len(xor_result_bytes) >= len(word_bytes):
         slice_bytes = xor_result_bytes[:len(word_bytes)]
-        test_result = xor_bytes(slice_bytes, word_bytes)
+        test_result = hf.xor_bytes(slice_bytes, word_bytes)
         test_result_str = test_result.decode('utf-8')
         
         # Return results if readable
@@ -28,11 +20,11 @@ def multiPadAttack(word, ciphertexts):
         final_result_string = ""
         go_on = True
         for j in range(len(ciphertexts)):
-            c1 = hex_to_bytes(ciphertexts[i])
-            c2 = hex_to_bytes(ciphertexts[j])
+            c1 = hf.hex_to_bytes(ciphertexts[i])
+            c2 = hf.hex_to_bytes(ciphertexts[j])
             
             # XOR the selected ciphers
-            xorred_cipher = xor_bytes(c1, c2)
+            xorred_cipher = hf.xor_bytes(c1, c2)
 
             # Test the word against the XOR result
             go_on, result_string = test_word_at_start(xorred_cipher, word)
