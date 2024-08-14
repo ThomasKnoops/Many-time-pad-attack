@@ -1,5 +1,3 @@
-import ciphers
-
 def xor_bytes(b1, b2):
     # Determine the length of the shorter byte array
     min_length = min(len(b1), len(b2))
@@ -13,45 +11,35 @@ def hex_to_bytes(hex_string):
 def test_word_at_start(xor_result_bytes, word):
     word_bytes = word.encode('utf-8')  # Convert word to bytes
     # Test only starting at the beginning
-    start = 0
     if len(xor_result_bytes) >= len(word_bytes):
-        slice_bytes = xor_result_bytes[start:start + len(word_bytes)]
+        slice_bytes = xor_result_bytes[:len(word_bytes)]
         test_result = xor_bytes(slice_bytes, word_bytes)
-        test_result_str = test_result.decode('utf-8', errors='ignore')
+        test_result_str = test_result.decode('utf-8')
         
-        # Print results if readable
+        # Return results if readable
         if test_result_str.isprintable() and len(test_result_str.strip()) > 0:
-            print(f"Test Result (String): '{test_result_str}'")
-            print(f"Test Result (Hex): {test_result.hex().upper()}")
+            return True, f"Test Result (String): '{test_result_str}'\n"
         else:
-            print(f"Word '{word}' does not match at the beginning of the XOR result.")
-        print()
+            return False, ""
 
-def main():
-    # Define the ciphertexts as hexadecimal strings
-    ciphertexts = [
-        ciphers.c1, ciphers.c2, ciphers.c3, ciphers.c4, ciphers.c5,
-        ciphers.c6, ciphers.c7, ciphers.c8, ciphers.c9, ciphers.c10
-    ]
-
-    # Define the word to test
-    word = 'the'
-
+def multiPadAttack(word, ciphertexts):
     # XOR every pair of ciphers and test the result
     for i in range(len(ciphertexts)):
+        final_result_string = ""
+        go_on = True
         for j in range(len(ciphertexts)):
             c1 = hex_to_bytes(ciphertexts[i])
             c2 = hex_to_bytes(ciphertexts[j])
             
             # XOR the selected ciphers
-            result = xor_bytes(c1, c2)
-            
-            # Print result as hexadecimal string
-            result_hex = result.hex()
-            print(f"{i + 1}:")
+            xorred_cipher = xor_bytes(c1, c2)
 
             # Test the word against the XOR result
-            test_word_at_start(result, word)
-
-if __name__ == "__main__":
-    main()
+            go_on, result_string = test_word_at_start(xorred_cipher, word)
+            if go_on:
+                final_result_string += f"XOR between c{i + 1} and c{j + 1}: {result_string}"
+            else:
+                print(f"XOR between c{i + 1} and word: '{word}' does not always produce a readable string.")
+                break
+        if go_on:
+            print(final_result_string)
