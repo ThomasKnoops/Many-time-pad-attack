@@ -14,6 +14,7 @@ def read_ciphers():
                 elif line.startswith("t") or line.startswith("T"):
                     T_CIPHER = line.split("= ")[1].strip()
 
+# This function will save the results to a file
 def save_to_file(data, filename):
     with open(filename, 'w') as file:
         for key, value in data.items():
@@ -33,7 +34,8 @@ if __name__ == "__main__":
         else:
             input_word = input_break
     # Add the target cipher to the list of ciphers
-    CIPHERS.append(T_CIPHER)
+    if T_CIPHER:
+        CIPHERS.append(T_CIPHER)
     # Start interactive mode for solving the cipher
     input_scentence = input("What is the scentence you would like to XOR with the ciphers?: ")
     input_cipher = input("From which cipher is this scentence the plaintext?: ")
