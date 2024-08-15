@@ -1,4 +1,0 @@
-Cipher 1: We can see the point w
-Cipher 2: A (private-key)  encry
-Cipher 3:  The Concise OxfordDic
-Cipher 4: The secret message is:
