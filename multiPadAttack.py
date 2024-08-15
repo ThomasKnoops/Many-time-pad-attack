@@ -31,7 +31,6 @@ def multiPadAttack(word, ciphertexts):
             go_on, result_string = test_word_at_start(xorred_cipher, word)
             if go_on:
                 final_result_string += f"c{j + 1}: {result_string}"
-                print(final_result_string)
             else:
                 return_string_result.append(f"Does not always produce a readable string.")
                 break
