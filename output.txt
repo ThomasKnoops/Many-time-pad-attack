@@ -1,10 +1,4 @@
-Cipher 1: We can factor the number 15 with quantum computers. We can also factor the number 15 with
-Cipher 2: Euler would probably enjoy that now his theorem becomes a corner stone of crypto - Annony
-Cipher 3: The nice thing about Keeyloq is now we cryptographers can drive a lot of fancy cars - Dan
-Cipher 4: The ciphertext produced by a weak encryption algorithm looks as good as ciphertext produc
-Cipher 5: You don't want to buy a set of car keys from a guy who specializes in stealing cars - Mar
-Cipher 6: There are two types of cryptography - that which will keep secrets safe from your little 
-Cipher 7: There are two types of cyptography: one that allows the Government to use brute force to 
-Cipher 8: We can see the point where the chip is unhappy if a wrong bit is sent and consumes more p
-Cipher 9: A (private-key)  encryption scheme states 3 algorithms, namely a procedure for generating
-Cipher 10: The secret message is: When using a stream cipher, never use the key more than once
+Cipher 1: We can see the point w
+Cipher 2: A (private-key)  encry
+Cipher 3:  The Concise OxfordDic
+Cipher 4: The secret message is:

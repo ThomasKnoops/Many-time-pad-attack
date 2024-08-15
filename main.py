@@ -183,33 +183,18 @@ def setup_gui_screen_3():
 def guess():
     global text_box_word, combobox_cipher, cipher_word_progress
     return_cipher_xor_word = dec.decipher(text_box_word.get(), CIPHERS[int(combobox_cipher.get()[1:]) - 1], CIPHERS)
-    print(return_cipher_xor_word)
     for i, result in enumerate(return_cipher_xor_word):
         cipher_word_progress[i].set("XOR with c" + str(i + 1) + ":\n" + result)    
 
-def save_to_file(data, filename):
-    with open(filename, 'w') as file:
-        for key, value in data.items():
-            file.write(f"{key}: {value}\n")
-    print(f"Data has been saved to {filename}")
+def save_to_file():
+    global cipher_word_progress
+    with open("output.txt", 'w') as file:
+        try:
+            for i in range(len(cipher_word_progress)):
+                file.write(f"Cipher {i+1}: {cipher_word_progress[i].get().split("\n", 1)[1]}\n")
+        except IndexError:
+            return
 
 if __name__ == "__main__":
     setup_gui_screen_1()
     ROOT.mainloop()
-
-    
-    # # Start interactive mode for solving the cipher
-    # input_scentence = input("What is the scentence you would like to XOR with the ciphers?: ")
-    # input_cipher = input("From which cipher is this scentence the plaintext?: ")
-    # while True:
-    #     results = dec.decipher(input_scentence, CIPHERS[int(input_cipher) - 1], CIPHERS)
-    #     input_break = input("Try a new scentence, or stop solving? ([new scentence]/s): ")
-    #     if input_break == "s":
-    #         break
-    #     else:
-    #         input_scentence = input_break
-    #         input_cipher = input("From which cipher is this scentence the plaintext?: ")
-    # # Save results to 'output.txt'
-    # save_to_file(results, 'output.txt')
-    
-
