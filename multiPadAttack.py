@@ -11,12 +11,13 @@ def test_word_at_start(xor_result_bytes, word):
         
         # Return results if readable
         if test_result_str.isprintable() and len(test_result_str.strip()) > 0:
-            return True, f"Test Result (String): '{test_result_str}'\n"
+            return True, f"'{test_result_str}'\n"
         else:
             return False, ""
 
 # Decipher the first characters of the ciphers using the words, interactively
 def multiPadAttack(word, ciphertexts):
+    return_string_result = []
     for i in range(len(ciphertexts)):
         final_result_string = ""
         go_on = True
@@ -29,10 +30,13 @@ def multiPadAttack(word, ciphertexts):
             # XOR the result with the word and check if it is readable
             go_on, result_string = test_word_at_start(xorred_cipher, word)
             if go_on:
-                final_result_string += f"XOR between c{i + 1} and c{j + 1}: {result_string}"
+                final_result_string += f"c{j + 1}: {result_string}"
+                print(final_result_string)
             else:
-                print(f"XOR between c{i + 1} and word: '{word}' does not always produce a readable string.")
+                return_string_result.append(f"Does not always produce a readable string.")
                 break
         if go_on:
             # Every XOR operation was successful and produced a readable string
-            print(final_result_string)
+            return_string_result.append(final_result_string)
+
+    return return_string_result

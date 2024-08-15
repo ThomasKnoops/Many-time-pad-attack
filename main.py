@@ -17,6 +17,8 @@ current_frame = None
 text_area = None
 target_value = tk.IntVar(value=0)
 combobox_value = None
+text_box_word = None
+cipher_word_progress = []
 
 def setup_gui_screen_1():
     global current_frame, text_area, target_value, combobox_value
@@ -24,7 +26,7 @@ def setup_gui_screen_1():
     current_frame = ttk.Frame(ROOT, padding=10)
     current_frame.grid(sticky="nsew")  # Ensure it stretches with the window
 
-    # Add a label
+    # Add info label
     ttk.Label(current_frame, text="Paste all your ciphers in this textbox. Only 1 per line. If you have a specific target cipher, make sure it is the last one!").grid(column=0, row=0, pady=(0, 10))
 
     # Create a text area with a scrollbar
@@ -71,16 +73,14 @@ def read_ciphers():
                 hex_value = help.plain_to_hex(line.strip())
                 if i == len(lines) - 1 and target_value.get() == 1:
                     T_CIPHER = hex_value
-                else:
-                    CIPHERS.append(hex_value)
+                CIPHERS.append(hex_value)
 
         case "Hexadecimal":
             for i, line in enumerate(lines):
                 hex_value = line.strip()  # Already in hex format
                 if i == len(lines) - 1 and target_value.get() == 1:
                     T_CIPHER = hex_value
-                else:
-                    CIPHERS.append(hex_value)
+                CIPHERS.append(hex_value)
 
         case "Binary":
             for i, line in enumerate(lines):
@@ -88,14 +88,56 @@ def read_ciphers():
                 hex_value = help.binary_to_hex(line.strip())
                 if i == len(lines) - 1 and target_value.get() == 1:
                     T_CIPHER = hex_value
-                else:
-                    CIPHERS.append(hex_value)
+                CIPHERS.append(hex_value)
 
-
-    print(CIPHERS)
-    print(T_CIPHER)
+    setup_gui_screen_2()
 
 def setup_gui_screen_2():
+    global current_frame, text_box_word
+    if current_frame:
+        current_frame.destroy()
+
+    # Create a frame using ttk
+    current_frame = ttk.Frame(ROOT, padding=10)
+    current_frame.grid(sticky="nsew")
+
+    # Add info label
+    ttk.Label(current_frame, text="Try words untill you find the start of a cipher. Once found, click next step.").grid(column=0, row=0, pady=(0, 10))
+    
+    # Create text box
+    text_box_word = ttk.Entry(current_frame, width=50)
+    text_box_word.grid(column=0, row=1, pady=(0, 10))
+
+    # Cipher Progress
+    cipher_frame = ttk.Frame(current_frame)
+    cipher_frame.grid(column=0, row=2, pady=(0, 10))
+    for i, cipher in enumerate(CIPHERS):
+        cipher_word_progress.append(tk.StringVar(value="XOR with c" + str(i + 1) + ": "))
+        ttk.Label(cipher_frame, textvariable=cipher_word_progress[i]).grid(column=i * 2, row=0, pady=(0, 5))
+        if i < len(CIPHERS) - 1:
+            separator = ttk.Separator(cipher_frame, orient='vertical')
+            separator.grid(column=(i * 2) + 1, row=0, sticky='ns', padx=(5, 0))
+
+    # Add buttons
+    button_frm = ttk.Frame(current_frame)
+    button_frm.grid(column=0, row=3, pady=(10, 0))
+
+    ttk.Button(button_frm, text="Try word", command=try_first_word).grid(column=0, row=0, pady=(10, 0))
+    ttk.Button(button_frm, text="Next step", command=setup_gui_screen_3).grid(column=1, row=0, pady=(10, 0))
+    ttk.Button(button_frm, text="Quit", command=ROOT.destroy).grid(column=2, row=0, pady=(10, 0))
+
+    # Configure grid stretching
+    current_frame.rowconfigure(0, weight=1)
+    current_frame.columnconfigure(0, weight=1)
+
+def try_first_word():
+    global text_box_word, cipher_word_progress
+    return_cipher_xor_word = mpa.multiPadAttack(text_box_word.get(), CIPHERS)
+    print(return_cipher_xor_word)
+    for i, result in enumerate(return_cipher_xor_word):
+        cipher_word_progress[i].set("XOR with c" + str(i + 1) + ":\n" + result)
+
+def setup_gui_screen_3():
     global current_frame
     if current_frame:
         current_frame.destroy()
@@ -104,19 +146,9 @@ def setup_gui_screen_2():
     current_frame = ttk.Frame(ROOT, padding=10)
     current_frame.grid(sticky="nsew")
 
-    # Add new widgets
-    ttk.Label(current_frame, text="The ciphers have been processed. Now perform the next steps.").grid(column=0, row=0, pady=(0, 10))
+    # Add info label
+    ttk.Label(current_frame, text="Solve the ciphers by completing them.").grid(column=0, row=0, pady=(0, 10))
     
-    # Example new widgets: you can add any widgets here as needed
-    ttk.Button(current_frame, text="Proceed", command=try_first_word).grid(column=0, row=1, pady=(10, 0))
-    ttk.Button(current_frame, text="Quit", command=ROOT.destroy).grid(column=1, row=1, pady=(10, 0))
-
-    # Configure grid stretching
-    current_frame.rowconfigure(0, weight=1)
-    current_frame.columnconfigure(0, weight=1)
-
-def try_first_word():
-    pass
 
 def save_to_file(data, filename):
     with open(filename, 'w') as file:
@@ -129,18 +161,6 @@ if __name__ == "__main__":
     ROOT.mainloop()
 
     
-    # Start interactive mode for searching the first word of any cipher
-    # input_word = input("Which word would you like to XOR at the beginning of the ciphers?: ")
-    # while True:
-    #     mpa.multiPadAttack(input_word, CIPHERS)
-    #     input_break = input("Try a new word, or stop searching? ([new word]/s): ")
-    #     if input_break == "s":
-    #         break
-    #     else:
-    #         input_word = input_break
-    # # Add the target cipher to the list of ciphers
-    # if T_CIPHER:
-    #     CIPHERS.append(T_CIPHER)
     # # Start interactive mode for solving the cipher
     # input_scentence = input("What is the scentence you would like to XOR with the ciphers?: ")
     # input_cipher = input("From which cipher is this scentence the plaintext?: ")
